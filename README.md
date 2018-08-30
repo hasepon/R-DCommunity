@@ -16,3 +16,4 @@ hasepon
 <p>[Ogg/Ogg vorbis](https://xiph.org/vorbis/)</p>
 <p>[pugixml](https://pugixml.org/)</p>
 <p>[Twitter](https://twitter.com/thasepon1023)</p>
+<p>[htAudio.dll](https://github.com/hasepon/htAudioDLL)</p>
