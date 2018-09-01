@@ -13,19 +13,21 @@
 	{
 		Tags
 		{
-			"RenderType"="Opaque"
+			"RenderType"="Transparent"
 			"Queue"="Transparent"
 		}
 
 		Pass
 		{
 			Cull Off
+			Blend SrcAlpha OneMinusSrcAlpha
 
 			CGPROGRAM
 			#pragma vertex vert
 			#pragma fragment frag
 			
 			#include "UnityCG.cginc"
+			#define SMOOTH_SIZE 0.05
 
 			struct appdata
 			{
@@ -63,9 +65,9 @@
 			fixed4 frag (v2f i) : SV_Target
 			{
 				fixed4 col = tex2D(_MainTex, i.uv) * _Color;
-				fixed alpha = tex2D(_DissolveTex, i.dissolveUv).r - _CutOff;
-				if (alpha < 0.0)
-					discard;
+				fixed alpha = tex2D(_DissolveTex, i.dissolveUv).r;
+
+				col.a = step(_CutOff, alpha);
 
 				return col;
 			}
