@@ -8,6 +8,7 @@
 		_DissolveTex("Dissolve Tex", 2D) = "white" {}
 		_CutOff("CutOff", Range(0, 1)) = 0.0
 		_Width("Dissolve Width", float) = 0
+		_BurnColor("Burn Color", Color) = (0,0,0,1)
 	}
 	SubShader
 	{
@@ -22,12 +23,13 @@
 			Cull Off
 			Blend SrcAlpha OneMinusSrcAlpha
 
+
 			CGPROGRAM
 			#pragma vertex vert
 			#pragma fragment frag
 			
 			#include "UnityCG.cginc"
-			#define SMOOTH_SIZE 0.05
+			#define SMOOTH_SIZE 0.1
 
 			struct appdata
 			{
@@ -52,7 +54,8 @@
 
 			float _CutOff;
 			float _Width;
-			
+			fixed4 _BurnColor;
+
 			v2f vert (appdata v)
 			{
 				v2f o;
@@ -64,10 +67,18 @@
 			
 			fixed4 frag (v2f i) : SV_Target
 			{
-				fixed4 col = tex2D(_MainTex, i.uv) * _Color;
-				fixed alpha = tex2D(_DissolveTex, i.dissolveUv).r;
+				fixed4 texColor = tex2D(_MainTex, i.uv) * _Color;
+				fixed4 col = texColor;
+				fixed dissolveEnd = tex2D(_DissolveTex, i.dissolveUv).r - _CutOff;
+				fixed burnBegin = dissolveEnd - _Width;
 
-				col.a = step(_CutOff, alpha);
+				fixed baseAlpha = smoothstep(0.0, SMOOTH_SIZE, dissolveEnd);
+				fixed burnAlpha = smoothstep(0.0, SMOOTH_SIZE, burnBegin);
+				col.a *= baseAlpha;
+
+				fixed3 baseColor = texColor.rgb * baseAlpha * burnAlpha;
+				fixed3 burnColor = _BurnColor.rgb * (1 - burnAlpha);
+				col.rgb = baseColor + burnColor;
 
 				return col;
 			}
