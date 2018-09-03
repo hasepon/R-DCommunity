@@ -16,6 +16,7 @@
 			#pragma fragment frag
 			
 			#include "UnityCG.cginc"
+			#include "NoiseUtil.cginc"
 
 			struct appdata
 			{
@@ -34,15 +35,10 @@
 
 			int _NoiseCount;
 
-			float randomNoise(fixed2 p)
-			{
-				return frac(sin(dot(p, fixed2(12.9898, 78.233))) * 43758.5453);
-			}
-
 			float noise(fixed2 n)
 			{
 				fixed2 p = floor(n);
-				return randomNoise(p);
+				return random(p);
 			}
 			
 			v2f vert (appdata v)

@@ -7,7 +7,6 @@
 	SubShader
 	{
 		Tags { "RenderType"="Opaque" }
-		LOD 100
 
 		Pass
 		{
@@ -16,6 +15,7 @@
 			#pragma fragment frag
 			
 			#include "UnityCG.cginc"
+			#include "NoiseUtil.cginc"
 
 			struct appdata
 			{
@@ -28,11 +28,6 @@
 				float2 uv : TEXCOORD0;
 				float4 vertex : SV_POSITION;
 			};
-
-			float randomNoise(fixed2 p)
-			{
-				return frac(sin(dot(p, fixed2(12.9898, 78.233))) * 43758.5453);
-			}
 
 			sampler2D _MainTex;
 			uniform float4 _MainTex_ST;
@@ -47,7 +42,7 @@
 			
 			fixed4 frag (v2f i) : SV_Target
 			{
-				fixed4 col = randomNoise(i.uv);
+				fixed4 col = random(i.uv);
 				return col;
 			}
 			ENDCG
